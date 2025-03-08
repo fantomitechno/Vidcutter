@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Celeste.Mod.UI;
 using Microsoft.Xna.Framework;
@@ -164,8 +165,15 @@ public class VidcutterModule : EverestModule {
     }
 
     public static bool InstallFFmpeg(OuiLoggedProgress progress) {
-        // Code mostly taken from psyGamer's TASRecorder because ffmpeg is a mess to work with
-        string DownloadURL = "https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-7.1-essentials_build.zip";
+        string DownloadURL;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+            DownloadURL = "https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-7.1-essentials_build.zip";
+        } else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+            DownloadURL = "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz";
+        } else {
+            Logger.Error("Vidcutter", "Unsupported OS (Sorry MacOS Gamers)");
+            return false;
+        }
         string DownloadFolder = Path.Combine("./VidCutter/", "ffmpeg");
         if (!Directory.Exists(DownloadFolder)) {
             Directory.CreateDirectory(DownloadFolder);
