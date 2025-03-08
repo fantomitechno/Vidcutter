@@ -166,10 +166,12 @@ public class VidcutterModule : EverestModule {
 
     public static bool InstallFFmpeg(OuiLoggedProgress progress) {
         string DownloadURL;
+        bool onLinux = false;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
             DownloadURL = "https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-7.1-essentials_build.zip";
         } else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
             DownloadURL = "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz";
+            onLinux = true;
         } else {
             Logger.Error("Vidcutter", "Unsupported OS (Sorry MacOS Gamers)");
             return false;
@@ -178,7 +180,7 @@ public class VidcutterModule : EverestModule {
         if (!Directory.Exists(DownloadFolder)) {
             Directory.CreateDirectory(DownloadFolder);
         }
-        string DownloadPath = Path.Combine(DownloadFolder, "ffmpeg.zip");
+        string DownloadPath = Path.Combine(DownloadFolder, onLinux ? "ffmpeg.tar.xz" : "ffmpeg.zip");
         string InstallPath = Path.Combine("./VidCutter/", Path.Combine("ffmpeg", "ffmpeg"));
         try {
             Logger.Info("Vidcutter", $"Starting download of {DownloadURL}");
